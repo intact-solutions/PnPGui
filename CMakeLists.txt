@@ -4,7 +4,13 @@ cmake_minimum_required(VERSION 3.8)
 
 project(PnPGui)
 
-add_subdirectory(third_party/imgui-node)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# Point CMake where to look for module files.
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
+include(LoguruLibrary)
+add_subdirectory(Application)
 
 set(PNPGUI_SOURCES
     src/PnPGui.cpp
@@ -45,11 +51,13 @@ add_executable(PnPGui ${APP_TYPE} ${PNPGUI_SOURCES} ${PNPGUI_RESOURCES})
 
 find_package(imgui REQUIRED)
 find_package(imgui_node_editor REQUIRED)
-target_link_libraries(${name} PRIVATE imgui imgui_node_editor Application)
+find_package(blueprint-utilities)
+target_link_libraries(PnPGui PRIVATE imgui imgui_node_editor Application blueprint-utilities)
 
 set(PNPGUI_BIN_DIR ${CMAKE_BINARY_DIR}/Bin)
+set_loguru(PnPGui)
 
-set_target_properties(${name} PROPERTIES
+set_target_properties(PnPGui PROPERTIES
     FOLDER "Examples"
     RUNTIME_OUTPUT_DIRECTORY                "${PNPGUI_BIN_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${PNPGUI_BIN_DIR}"
@@ -60,7 +68,7 @@ set_target_properties(${name} PROPERTIES
     RELWITHDEBINGO_POSTFIX                  _rd
     MINSIZEREL_POSTFIX                      _r
     VS_DEBUGGER_WORKING_DIRECTORY           ${PNPGUI_BIN_DIR}
-    MACOSX_BUNDLE_INFO_PLIST                "${CMAKE_SOURCE_DIR}/Examples/Common/Support/Info.plist.in"
+    MACOSX_BUNDLE_INFO_PLIST                "${CMAKE_SOURCE_DIR}/Resources/Info.plist.in"
     MACOSX_BUNDLE_BUNDLE_NAME               "${PACKAGE_NAME}"
     MACOSX_BUNDLE_GUI_IDENTIFIER            "com.sandbox.collisions"
     MACOSX_BUNDLE_LONG_VERSION_STRING       "${PACKAGE_VERSION}"
@@ -69,7 +77,7 @@ set_target_properties(${name} PROPERTIES
 )
 
 add_custom_command(
-    TARGET ${name}
+    TARGET PnPGui
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory ARGS ${PNPGUI_BIN_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_directory ARGS ${CMAKE_SOURCE_DIR}/Data ${PNPGUI_BIN_DIR}/Data
