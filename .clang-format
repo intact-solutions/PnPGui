@@ -1,0 +1,9 @@
+BasedOnStyle: LLVM
+DerivePointerAlignment: false
+PointerAlignment: Left
+IncludeBlocks: Regroup
+SortIncludes: false
+IndentCaseLabels: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+IndentPPDirectives: None
+IndentWidth: 2
